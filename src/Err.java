@@ -5,20 +5,20 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-public final class Err<Void, E extends RuntimeException> implements Result<Void, E> {
+public final class Err<Void, E> implements Result<Void, E> {
 
-    final E exception;
+    final E errorValue;
 
     private Err(final E e) {
-        this.exception = e;
+        this.errorValue = e;
     }
 
-    public static <Void, E extends RuntimeException> Err<Void, E> of(@NotNull final E errorValue) {
+    public static <Void, E> Err<Void, E> of(@NotNull final E errorValue) {
         return new Err<>(errorValue);
     }
     @Override
-    public Void orElseThrow() throws E {
-        throw exception;
+    public Void orElseThrow() throws RuntimeException {
+        throw new RuntimeException("Calling unwrap() on Err!");
     }
 
     @Override
@@ -37,7 +37,7 @@ public final class Err<Void, E extends RuntimeException> implements Result<Void,
 
     @Override
     public void ifErr(final Consumer<? super E> action) {
-        action.accept(exception);
+        action.accept(errorValue);
     }
 
     @Override
